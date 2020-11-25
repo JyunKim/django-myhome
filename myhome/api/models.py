@@ -1,4 +1,5 @@
 from django.db import models
+from django import forms
 
 
 class Room(models.Model):
@@ -14,7 +15,7 @@ class Room(models.Model):
     ]
 
     address = models.CharField('주소', max_length=100)
-    zip_code = models.IntegerField('우편번호')
+    zip_code = models.CharField('우편번호', max_length=10)
     room_type = models.CharField('방 종류', max_length=10, choices=ROOM_TYPE_CHOICES)
     deposit = models.IntegerField('보증금')
     monthly_rent = models.IntegerField('월세')
@@ -32,7 +33,7 @@ class Room(models.Model):
     air_conditioner = models.BooleanField('에어컨')
     washer = models.BooleanField('세탁기')
     short_term = models.BooleanField('단기 임대')
-    heating = models.CharField('난방', max_length=10, choices=HEATING_CHOICES)   
+    heating = models.CharField('난방', max_length=10, choices=HEATING_CHOICES)
     occupancy_date = models.DateField('입주 가능일')
     introduction = models.CharField('한 줄 소개', max_length=30)
     detail = models.TextField('상세 설명')
@@ -62,12 +63,17 @@ class Tenant(models.Model):
     residence_length = models.CharField('거주 기간', max_length=30, null=True, blank=True)
 
 
+def rate_validator(value):
+    if value < 0 or value > 5:
+        raise forms.ValidationError('0 ~ 5 사이의 숫자를 입력해주세요.')
+
+
 class Review(models.Model):
     room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='reviews', verbose_name='매물')
     pros = models.CharField('장점', max_length=40)
     cons = models.CharField('단점', max_length=40)
     comment = models.CharField('하고 싶은 말', max_length=40)
-    rate = models.IntegerField('평점')
+    rate = models.FloatField('평점', validators=[rate_validator])
 
 
 class Photo(models.Model):

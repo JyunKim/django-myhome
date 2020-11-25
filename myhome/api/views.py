@@ -12,8 +12,8 @@ class RoomFilter(FilterSet):
     deposit = filters.RangeFilter()
     monthly_rent = filters.RangeFilter()
     management_fee = filters.RangeFilter()
-    space__min = filters.NumberFilter(field_name='space', method='filter_space_gte')
-    space__max = filters.NumberFilter(field_name='space', method='filter_space_lte')
+    space_min = filters.NumberFilter(field_name='space', method='filter_space_gte')
+    space_max = filters.NumberFilter(field_name='space', method='filter_space_lte')
     
     def filter_space_gte(self, queryset, name, value):
         return queryset.filter(space__gte=int(value)*3.305785)
@@ -26,3 +26,27 @@ class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
     filterset_class = RoomFilter
+
+    @action(detail=True, url_path='tenant-list')
+    def tenant_list(self, request, pk):
+        room = get_object_or_404(Room, pk=pk)
+        tenants = room.tenants.all()
+        serializer = TenantSerializer(tenants, many=True)
+        return Response(serializer.data)
+
+    @action(detail=True, url_path='review-list')
+    def review_list(self, request, pk):
+        room = get_object_or_404(Room, pk=pk)
+        reviews = room.reviews.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)
+
+
+class ReviewViewSet(viewsets.ModelViewSet):
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+
+class TenantViewSet(viewsets.ModelViewSet):
+    queryset = Tenant.objects.all()
+    serializer_class = TenantSerializer

@@ -2,12 +2,6 @@ from rest_framework import serializers
 from .models import Room, Tenant, Review, Photo, Contract
 
 
-class RoomSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Room
-        fields = '__all__'
-
-
 class TenantSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tenant
@@ -29,4 +23,13 @@ class PhotoSerializer(serializers.ModelSerializer):
 class ContractSerializer(serializers.ModelSerializer):
     class Meta:
         model = Contract
+        fields = '__all__'
+
+
+class RoomSerializer(serializers.ModelSerializer):
+    tenants = TenantSerializer(many=True, read_only=True)
+    reviews = ReviewSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Room
         fields = '__all__'

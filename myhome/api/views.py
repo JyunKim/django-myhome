@@ -41,12 +41,24 @@ class RoomViewSet(viewsets.ModelViewSet):
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
 
+    @action(detail=True, url_path='photo-list')
+    def photo_list(self, request, pk):
+        room = get_object_or_404(Room, pk=pk)
+        photos = room.photos.all()
+        serializer = PhotoSerializer(photos, many=True)
+        return Response(serializer.data)
+
+
+class TenantViewSet(viewsets.ModelViewSet):
+    queryset = Tenant.objects.all()
+    serializer_class = TenantSerializer
+
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
 
 
-class TenantViewSet(viewsets.ModelViewSet):
-    queryset = Tenant.objects.all()
-    serializer_class = TenantSerializer
+class PhotoViewSet(viewsets.ModelViewSet):
+    queryset = Photo.objects.all()
+    serializer_class = PhotoSerializer

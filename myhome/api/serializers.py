@@ -29,6 +29,7 @@ class ContractSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     tenants = TenantSerializer(many=True, read_only=True)
     reviews = ReviewSerializer(many=True, read_only=True)
+    photos = PhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Room

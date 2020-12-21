@@ -1,10 +1,10 @@
 from rest_framework import serializers
-from .models import Room, Tenant, Review, Photo, Contract
+from .models import Account, Appointment, Room, Review, Photo
 
 
-class TenantSerializer(serializers.ModelSerializer):
+class AccountSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Tenant
+        model = Account
         fields = '__all__'
 
 
@@ -20,14 +20,13 @@ class PhotoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ContractSerializer(serializers.ModelSerializer):
+class AppointmentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Contract
+        model = Appointment
         fields = '__all__'
 
 
 class RoomSerializer(serializers.ModelSerializer):
-    tenants = TenantSerializer(many=True, read_only=True)
     reviews = ReviewSerializer(many=True, read_only=True)
     photos = PhotoSerializer(many=True, read_only=True)
 

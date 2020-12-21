@@ -1,5 +1,35 @@
 from django.db import models
 from django import forms
+from django.contrib.auth.models import User
+
+
+class Account(models.Model):
+    GENDER_CHOICES = [
+        ('남성', '남성'),
+        ('여성', '여성'),
+    ]
+
+    ROLE_CHOICES = [
+        ('집주인', '집주인'),
+        ('세입자', '세입자'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    interest_rooms = models.ManyToManyField('Room', related_name='users', verbose_name='관심 매물', blank=True)
+    name = models.CharField('이름', max_length=20)
+    contact = models.CharField('휴대폰 번호', max_length=20)
+    birth = models.DateField('생년월일')
+    gender = models.CharField('성별', max_length=5, choices=GENDER_CHOICES)
+    role = models.CharField('역할', max_length=10, choices=ROLE_CHOICES)
+
+    def __str__(self):
+        return self.name, self.role
+
+
+class Appointment(models.Model):
+    user = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='appointments', verbose_name='집주인')
+    time = models.DateTimeField('방문 시간')
+    reserved = models.BooleanField('예약 완료 여부', default=False)
 
 
 class Room(models.Model):
@@ -14,6 +44,7 @@ class Room(models.Model):
         ('개별난방', '개별난방'),
     ]
 
+    user = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='rooms', verbose_name='집주인')
     address = models.CharField('주소', max_length=100)
     zip_code = models.CharField('우편번호', max_length=10)
     room_type = models.CharField('방 종류', max_length=10, choices=ROOM_TYPE_CHOICES)
@@ -46,30 +77,14 @@ class Room(models.Model):
         return self.address
 
 
-class Tenant(models.Model):
-    UNIVERSITY_CHOICES = [
-        ('연세대학교', '연세대학교'),
-        ('이화여자대학교', '이화여자대학교'),
-    ]
-
-    GENDER_CHOICES = [
-        ('남', '남'),
-        ('여', '여'),
-    ]
-
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='tenants', verbose_name='매물')
-    university = models.CharField('학교', max_length=10, choices=UNIVERSITY_CHOICES)
-    gender = models.CharField('성별', max_length=5, choices=GENDER_CHOICES)
-    residence_length = models.CharField('거주 기간', max_length=30, null=True, blank=True)
-
-
 def rate_validator(value):
     if value < 0 or value > 5:
         raise forms.ValidationError('0 ~ 5 사이의 숫자를 입력해주세요.')
 
 
 class Review(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='reviews', verbose_name='매물')
+    user = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='reviews', verbose_name='세입자')
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='reviews', verbose_name='매물')
     pros = models.CharField('장점', max_length=40)
     cons = models.CharField('단점', max_length=40)
     comment = models.CharField('하고 싶은 말', max_length=40)
@@ -77,12 +92,7 @@ class Review(models.Model):
 
 
 class Photo(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='photos', verbose_name='매물')
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='photos', verbose_name='매물')
     photo_file = models.ImageField('사진', upload_to='photo/%Y/%m/%d')  # request.FIELS['image_files'] -> MEDIA_ROOT
     # path: image.image_file.path  MEDIA_ROOT/photo/~/~/~/~.jpg (절대 경로) - 경로에 저장
     # url: image.image_file.url  MEDIA_URL/photo/~/~/~/~.jpg (상대 경로) - DB에 문자열로 저장
-
-
-class Contract(models.Model):
-    room = models.ForeignKey(Room, on_delete=models.CASCADE, related_name='contracts', verbose_name='매물')
-    contract_file = models.ImageField('계약서', upload_to='contract/%Y/%m/%d')

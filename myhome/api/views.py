@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
 from django.shortcuts import get_object_or_404
-from .models import Room, Tenant, Review, Photo, Contract
-from .serializers import RoomSerializer, TenantSerializer, ReviewSerializer, PhotoSerializer, ContractSerializer
+from .models import Account, Appointment, Room, Review, Photo
+from .serializers import AccountSerializer, AppointmentSerializer, RoomSerializer, ReviewSerializer, PhotoSerializer
 
 
 class RoomFilter(FilterSet):
@@ -27,13 +27,6 @@ class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
     filterset_class = RoomFilter
 
-    @action(detail=True, url_path='tenant-list')
-    def tenant_list(self, request, pk):
-        room = get_object_or_404(Room, pk=pk)
-        tenants = room.tenants.all()
-        serializer = TenantSerializer(tenants, many=True)
-        return Response(serializer.data)
-
     @action(detail=True, url_path='review-list')
     def review_list(self, request, pk):
         room = get_object_or_404(Room, pk=pk)
@@ -47,11 +40,6 @@ class RoomViewSet(viewsets.ModelViewSet):
         photos = room.photos.all()
         serializer = PhotoSerializer(photos, many=True)
         return Response(serializer.data)
-
-
-class TenantViewSet(viewsets.ModelViewSet):
-    queryset = Tenant.objects.all()
-    serializer_class = TenantSerializer
 
 
 class ReviewViewSet(viewsets.ModelViewSet):

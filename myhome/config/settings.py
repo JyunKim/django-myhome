@@ -19,7 +19,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
-with open(os.path.join(BASE_DIR, 'myhome', 'secrets.json')) as secret_file:
+with open(os.path.join(BASE_DIR, 'config', 'secrets.json')) as secret_file:
     secrets = json.load(secret_file)
 
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -59,7 +59,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'myhome.urls'
+ROOT_URLCONF = 'config.urls'
 
 TEMPLATES = [
     {
@@ -77,7 +77,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'myhome.wsgi.application'
+WSGI_APPLICATION = 'config.wsgi.application'
 
 
 # Database

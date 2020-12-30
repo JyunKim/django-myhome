@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
 from django.shortcuts import get_object_or_404
-from .models import Account, Appointment, Room, Review, Photo
-from .serializers import AccountSerializer, AppointmentSerializer, RoomSerializer, ReviewSerializer, PhotoSerializer
+from .models import Account, Room, Review, Comment, Photo
+from .serializers import AccountSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer
 
 
 class RoomFilter(FilterSet):
@@ -45,6 +45,11 @@ class RoomViewSet(viewsets.ModelViewSet):
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
+
+
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
 
 
 class PhotoViewSet(viewsets.ModelViewSet):

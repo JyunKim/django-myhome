@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Appointment, Room, Review, Photo
+from .models import Account, Room, Review, Comment, Photo
 
 
 class AccountSerializer(serializers.ModelSerializer):
@@ -14,15 +14,15 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PhotoSerializer(serializers.ModelSerializer):
+class CommentSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Photo
+        model = Comment
         fields = '__all__'
 
 
-class AppointmentSerializer(serializers.ModelSerializer):
+class PhotoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Appointment
+        model = Photo
         fields = '__all__'
 
 

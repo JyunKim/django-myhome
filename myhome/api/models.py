@@ -12,6 +12,7 @@ class Account(models.Model):
     ROLE_CHOICES = [
         ('집주인', '집주인'),
         ('세입자', '세입자'),
+        ('멘토', '멘토'),
     ]
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -22,14 +23,9 @@ class Account(models.Model):
     gender = models.CharField('성별', max_length=5, choices=GENDER_CHOICES)
     role = models.CharField('역할', max_length=10, choices=ROLE_CHOICES)
 
+
     def __str__(self):
         return self.name, self.role
-
-
-class Appointment(models.Model):
-    user = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='appointments', verbose_name='집주인')
-    time = models.DateTimeField('방문 시간')
-    reserved = models.BooleanField('예약 완료 여부', default=False)
 
 
 class Room(models.Model):
@@ -69,9 +65,7 @@ class Room(models.Model):
     introduction = models.CharField('한 줄 소개', max_length=30)
     detail = models.TextField('상세 설명')
     distance = models.CharField('거리', max_length=40, null=True, blank=True)
-    landlord_name = models.CharField('집주인 이름', max_length=10)
-    landlord_contact = models.CharField('집주인 번호', max_length=20)
-    sold_out = models.BooleanField('활성화', default=True)
+    activation = models.BooleanField('활성화', default=True)
 
     def __str__(self):
         return self.address
@@ -83,11 +77,18 @@ def rate_validator(value):
 
 
 class Review(models.Model):
-    user = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='reviews', verbose_name='세입자')
-    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='reviews', verbose_name='매물')
+    tenant = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='written_reviews', verbose_name='작성자')
+    mentor = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='reviews', verbose_name='멘토')
+    content = models.TextField('후기')
+    rate = models.FloatField('평점', validators=[rate_validator])
+
+
+class Comment(models.Model):
+    user = models.ForeignKey('Account', on_delete=models.CASCADE, related_name='comments', verbose_name='작성자')
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='comments', verbose_name='매물')
     pros = models.CharField('장점', max_length=40)
     cons = models.CharField('단점', max_length=40)
-    comment = models.CharField('하고 싶은 말', max_length=40)
+    content = models.CharField('하고 싶은 말', max_length=40)
     rate = models.FloatField('평점', validators=[rate_validator])
 
 

@@ -1,11 +1,5 @@
 from rest_framework import serializers
-from .models import Account, Room, Review, Comment, Photo
-
-
-class AccountSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Account
-        fields = '__all__'
+from .models import User, Room, Review, Comment, Photo
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -27,9 +21,18 @@ class PhotoSerializer(serializers.ModelSerializer):
 
 
 class RoomSerializer(serializers.ModelSerializer):
-    reviews = ReviewSerializer(many=True, read_only=True)
+    comments = CommentSerializer(many=True, read_only=True)
     photos = PhotoSerializer(many=True, read_only=True)
 
     class Meta:
         model = Room
         fields = '__all__'
+
+
+# class AccountSerializer(serializers.ModelSerializer):
+#     interest_rooms = RoomSerializer(many=True, read_only=True)
+#     reviews = ReviewSerializer(many=True, read_only=True)
+
+#     class Meta:
+#         model = Account
+#         fields = '__all__'

@@ -27,11 +27,11 @@ class RoomViewSet(viewsets.ModelViewSet):
     serializer_class = RoomSerializer
     filterset_class = RoomFilter
 
-    @action(detail=True, url_path='review-list')
-    def review_list(self, request, pk):
+    @action(detail=True, url_path='comment-list')
+    def comment_list(self, request, pk):
         room = get_object_or_404(Room, pk=pk)
-        reviews = room.reviews.all()
-        serializer = ReviewSerializer(reviews, many=True)
+        comments = room.comments.all()
+        serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
 
     @action(detail=True, url_path='photo-list')
@@ -60,3 +60,10 @@ class PhotoViewSet(viewsets.ModelViewSet):
 class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+
+    @action(detail=True, url_path='review-list')
+    def review_list(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        reviews = user.reviews.all()
+        serializer = ReviewSerializer(reviews, many=True)
+        return Response(serializer.data)

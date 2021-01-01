@@ -37,6 +37,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('남성', '남성'),
         ('여성', '여성'),
     ]
+    ROLE_CHOICES = [
+        ('멘티', '멘티'),
+        ('멘토', '멘토'),
+    ]
 
     interest_rooms = models.ManyToManyField('Room', related_name='users', verbose_name='관심 매물', blank=True)
     email = models.EmailField('이메일', unique=True)
@@ -44,6 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     contact = models.CharField('휴대폰 번호', max_length=20)
     birth = models.DateField('생년월일', blank=True, null=True)
     gender = models.CharField('성별', max_length=5, choices=GENDER_CHOICES)
+    role = models.CharField('역할', max_length=5, choices=ROLE_CHOICES, default='멘티')
     is_staff = models.BooleanField(_('staff status'), default=False)
     is_active = models.BooleanField(_('active'), default=True)
 

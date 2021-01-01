@@ -4,7 +4,7 @@ from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
 from django.shortcuts import get_object_or_404
 from .models import User, Room, Review, Comment, Photo
-from .serializers import RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer
+from .serializers import UserSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer
 
 
 class RoomFilter(FilterSet):
@@ -42,11 +42,6 @@ class RoomViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-# class AccountViewSet(viewsets.ModelViewSet):
-#     queryset = Account.objects.all()
-#     serializer_class = AccountSerializer
-
-
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -60,3 +55,8 @@ class CommentViewSet(viewsets.ModelViewSet):
 class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer

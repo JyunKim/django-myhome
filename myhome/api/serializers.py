@@ -29,10 +29,11 @@ class RoomSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class AccountSerializer(serializers.ModelSerializer):
-#     interest_rooms = RoomSerializer(many=True, read_only=True)
-#     reviews = ReviewSerializer(many=True, read_only=True)
+class UserSerializer(serializers.ModelSerializer):
+    interest_rooms = RoomSerializer(many=True, read_only=True)
+    rooms = RoomSerializer(many=True, read_only=True)
+    reviews = ReviewSerializer(many=True, read_only=True)
 
-#     class Meta:
-#         model = Account
-#         fields = '__all__'
+    class Meta:
+        model = User
+        fields = ['id', 'interest_rooms', 'email', 'name', 'contact', 'birth', 'gender', 'rooms', 'reviews']

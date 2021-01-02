@@ -37,10 +37,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         ('남성', '남성'),
         ('여성', '여성'),
     ]
-    ROLE_CHOICES = [
-        ('멘티', '멘티'),
-        ('멘토', '멘토'),
-    ]
 
     interest_rooms = models.ManyToManyField('Room', related_name='users', verbose_name='관심 매물', blank=True)
     email = models.EmailField('이메일', unique=True)
@@ -48,7 +44,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     contact = models.CharField('휴대폰 번호', max_length=20)
     birth = models.DateField('생년월일', blank=True, null=True)
     gender = models.CharField('성별', max_length=5, choices=GENDER_CHOICES)
-    role = models.CharField('역할', max_length=5, choices=ROLE_CHOICES, default='멘티')
     is_staff = models.BooleanField(_('staff status'), default=False)
     is_active = models.BooleanField(_('active'), default=True)
 
@@ -72,6 +67,25 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def email_user(self, subject, message, from_email=None, **kwargs):
         send_mail(subject, message, from_email, [self.email], **kwargs)
+
+
+class Mentor(models.Model):
+    GENDER_CHOICES = [
+        ('남성', '남성'),
+        ('여성', '여성'),
+    ]
+
+    name = models.CharField('이름', max_length=20)
+    email = models.EmailField('이메일', unique=True)
+    contact = models.CharField('휴대폰 번호', max_length=20)
+    birth = models.DateField('생년월일', blank=True, null=True)
+    gender = models.CharField('성별', max_length=5, choices=GENDER_CHOICES)
+    region = models.CharField('지역', max_length=20)
+    introduction = models.CharField('한줄 소개', max_length=40)
+    career = models.CharField('경력', max_length=100)
+
+    def __str__(self):
+        return self.name
 
 
 class Room(models.Model):
@@ -123,8 +137,8 @@ def rate_validator(value):
 
 
 class Review(models.Model):
-    tenant = models.ForeignKey('User', on_delete=models.CASCADE, related_name='written_reviews', verbose_name='작성자')
-    mentor = models.ForeignKey('User', on_delete=models.CASCADE, related_name='reviews', verbose_name='멘토')
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='written_reviews', verbose_name='작성자')
+    mentor = models.ForeignKey('Mentor', on_delete=models.CASCADE, related_name='reviews', verbose_name='멘토')
     content = models.TextField('후기')
     rate = models.FloatField('평점', validators=[rate_validator])
 

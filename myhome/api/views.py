@@ -3,8 +3,8 @@ from rest_framework.response import Response
 from rest_framework.decorators import action
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
 from django.shortcuts import get_object_or_404
-from .models import User, Room, Review, Comment, Photo
-from .serializers import UserSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer
+from .models import User, Mentor, Room, Review, Comment, Photo
+from .serializers import UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer
 
 
 class RoomFilter(FilterSet):
@@ -61,9 +61,14 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
+
+class MentorViewSet(viewsets.ModelViewSet):
+    queryset = Mentor.objects.all()
+    serializer_class = MentorSerializer
+
     @action(detail=True, url_path='review-list')
     def review_list(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        reviews = user.reviews.all()
+        mentor = get_object_or_404(Mentor, pk=pk)
+        reviews = mentor.reviews.all()
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Room, Review, Comment, Photo
+from .models import User, Mentor, Room, Review, Comment, Photo
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -30,9 +30,14 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    interest_rooms = RoomSerializer(many=True, read_only=True)
+    class Meta:
+        model = User
+        fields = ['id', 'interest_rooms', 'email', 'password', 'name', 'contact', 'birth', 'gender']
+
+
+class MentorSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)
 
     class Meta:
-        model = User
-        fields = ['id', 'interest_rooms', 'email', 'password', 'name', 'contact', 'birth', 'gender', 'role', 'reviews']
+        model = Mentor
+        fields = '__all__'

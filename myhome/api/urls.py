@@ -9,5 +9,6 @@ router.register(r'reviews', views.ReviewViewSet)
 router.register(r'photos', views.PhotoViewSet)
 router.register(r'comments', views.CommentViewSet)
 router.register(r'users', views.UserViewSet)
+router.register(r'mentors', views.MentorViewSet)
 
 urlpatterns = router.urls

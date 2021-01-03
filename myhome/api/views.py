@@ -1,10 +1,11 @@
 from rest_framework import status, viewsets
 from rest_framework.response import Response
-from rest_framework.decorators import action
+from rest_framework.decorators import action, api_view, permission_classes, authentication_classes
+from rest_framework.permissions import AllowAny
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
 from django.shortcuts import get_object_or_404
 from .models import User, Mentor, Room, Review, Comment, Photo
-from .serializers import UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer
+from .serializers import UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer, UserLoginSerializer
 
 
 class RoomFilter(FilterSet):
@@ -72,3 +73,21 @@ class MentorViewSet(viewsets.ModelViewSet):
         reviews = mentor.reviews.all()
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def login(request):
+    if request.method == 'POST':
+        serializer = UserLoginSerializer(data=request.data)
+
+        if not serializer.is_valid(raise_exception=True):
+            return Response({'message': 'Request Body Error.'}, status=status.HTTP_409_CONFLICT)
+        if serializer.validated_data['email'] == 'None':
+            return Response({'message': 'fail'}, status=status.HTTP_200_OK)
+
+        response = {
+            'message': 'success',
+            'token': serializer.data['token']
+        }
+        return Response(response, status=status.HTTP_200_OK)

@@ -39,6 +39,18 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'interest_rooms', 'email', 'password', 'name', 'contact', 'birth', 'gender']
 
+    def create(self, validated_data):
+        user = User.objects.create(
+            email=validated_data['email'],
+            name=validated_data['name'],
+            contact=validated_data['contact'],
+            birth=validated_data['birth'],
+            gender=validated_data['gender'],
+        )
+        user.set_password(validated_data['password'])
+        user.save()
+        return user
+
 
 class MentorSerializer(serializers.ModelSerializer):
     reviews = ReviewSerializer(many=True, read_only=True)

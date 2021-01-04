@@ -2,7 +2,7 @@
 
 ### Room
 - URL: http://127.0.0.1:8000/api/rooms/
-- Method: GET, POST
+- Method: GET, POST(로그인 필요)
 ```python
 [
     {
@@ -56,7 +56,7 @@
 ```
 
 - URL: http://127.0.0.1:8000/api/rooms/1/
-- Method: GET, PUT, DELETE
+- Method: GET, PUT(로그인 필요), DELETE(로그인 필요)
 ```python
 {
     "id": 1,
@@ -181,9 +181,12 @@ Nested list
 ]
 ```
 
+- URL: http://127.0.0.1:8000/api/users/
+- Method: GET, PUT(본인만 가능), DELETE(본인만 가능)
+
 ### Mentor
 - URL: http://127.0.0.1:8000/api/mentors/
-- Method: GET, POST
+- Method: GET, POST(로그인 필요)
 ```python
 [
     {
@@ -226,7 +229,7 @@ Nested list
 
 ### Review
 - URL: http://127.0.0.1:8000/api/reviews/
-- Method: GET, POST
+- Method: GET, POST(로그인 필요)
 ```python
 [
     {
@@ -241,7 +244,7 @@ Nested list
 
 ### Comment
 - URL: http://127.0.0.1:8000/api/comments/
-- Method: GET, POST
+- Method: GET, POST(로그인 필요)
 ```python
 [
     {
@@ -267,4 +270,21 @@ Nested list
         "room": 1
     }
 ]
+```
+
+### Login
+- URL: http://127.0.0.1:8000/api/login/
+- Method: POST   
+email, password -> token 발행
+```python
+{
+    "email": "zxcv@naver.com",
+    "password": "qwer1234"
+}
+```
+```python
+{
+    "message": "success",
+    "token": "{'refresh': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYwOTg1MjM2NiwianRpIjoiZjIzNjBmOTI4NzNjNGUxNzg0YjNlY2JlYzZiNGM5ZDQiLCJ1c2VyX2lkIjo3fQ.erP3l2NqAH3D_20aJdhQofpXZ2VAGxBrp4vmrZHaYMU', 'access': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjA5NzY5NTY2LCJqdGkiOiI0NDFlNjJkMGRkMGY0NzcyYTZlZDYzN2M3NTRlOWVhMSIsInVzZXJfaWQiOjd9.kARZC5ttxoq2KiYcEl7S5HyCyPGuR3uIgRWXxYkhy3g'}"
+}
 ```

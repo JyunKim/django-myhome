@@ -148,7 +148,7 @@ class Comment(models.Model):
     room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='comments', verbose_name='매물')
     pros = models.CharField('장점', max_length=40)
     cons = models.CharField('단점', max_length=40)
-    content = models.CharField('하고 싶은 말', max_length=40)
+    content = models.CharField('한줄 평', max_length=40)
     rate = models.FloatField('평점', validators=[rate_validator])
 
 

@@ -29,12 +29,30 @@ class RoomViewSet(viewsets.ModelViewSet):
     filterset_class = RoomFilter
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    def create(self, request, *args, **kwargs):
+        request.data['user'] = request.user.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
     @action(detail=True, url_path='comment-list')
     def comment_list(self, request, pk):
         room = get_object_or_404(Room, pk=pk)
         comments = room.comments.all()
         serializer = CommentSerializer(comments, many=True)
         return Response(serializer.data)
+    
+    @action(methods=['post'], detail=True, url_path='post-comment')
+    def post_comment(self, request, pk):
+        request.data['user'] = request.user.id
+        request.data['room'] = pk
+        serializer = CommentSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
     @action(detail=True, url_path='photo-list')
     def photo_list(self, request, pk):
@@ -43,17 +61,42 @@ class RoomViewSet(viewsets.ModelViewSet):
         serializer = PhotoSerializer(photos, many=True)
         return Response(serializer.data)
 
+    @action(methods=['post'], detail=True, url_path='post-photo')
+    def post_photo(self, request, pk):
+        request.data['room'] = pk
+        serializer = PhotoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class ReviewViewSet(viewsets.ModelViewSet):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
 
+    def create(self, request, *args, **kwargs):
+        request.data['user'] = request.user.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def create(self, request, *args, **kwargs):
+        request.data['user'] = request.user.id
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class PhotoViewSet(viewsets.ModelViewSet):
@@ -87,7 +130,17 @@ class MentorViewSet(viewsets.ModelViewSet):
         serializer = ReviewSerializer(reviews, many=True)
         return Response(serializer.data)
 
-
+    @action(methods=['post'], detail=True, url_path='post-review')
+    def post_review(self, request, pk):
+        request.data['user'] = request.user.id
+        request.data['mentor'] = pk
+        serializer = ReviewSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        
+        
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def login(request):

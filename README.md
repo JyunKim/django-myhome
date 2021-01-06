@@ -3,6 +3,7 @@
 ### Room
 - URL: http://127.0.0.1:8000/api/rooms/
 - Method: GET, POST(로그인 필요)
+- POST시 body에 id, comments, photos, activation, user를 제외한 정보 전송
 ```python
 [
     {
@@ -129,6 +130,10 @@ Nested list
 ]
 ```
 
+- URL: http://127.0.0.1:8000/api/rooms/1/post-comment/
+- Method: POST
+- body에 pros, cons, content, rate 정보 전송
+---
 - URL: http://127.0.0.1:8000/api/rooms/1/photo-list/
 - Method: GET
 ```python
@@ -141,6 +146,10 @@ Nested list
 ]
 ```
 
+- URL: http://127.0.0.1:8000/api/rooms/1/post-photo/
+- Method: POST
+- body에 photo_file 정보 전송
+  
 ### User
 - URL: http://127.0.0.1:8000/api/users/
 - Method: GET, POST
@@ -226,6 +235,10 @@ Nested list
     }
 ]
 ```
+
+- URL: http://127.0.0.1:8000/api/mentors/1/post-review/
+- Method: POST
+- body에 content, rate 정보 전송
 
 ### Review
 - URL: http://127.0.0.1:8000/api/reviews/

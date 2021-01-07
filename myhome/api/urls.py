@@ -21,5 +21,6 @@ urlpatterns = [
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),  # refresh: refresh token
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),  # token: token
     path('login/', views.login, name='login'),
+    path('logout/', views.logout, name='logout'),
     path('', include(router.urls)),
 ]

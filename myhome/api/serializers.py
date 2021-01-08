@@ -62,11 +62,7 @@ class MentorSerializer(serializers.ModelSerializer):
 
 def get_token(user):
     refresh = RefreshToken.for_user(user)
-
-    return {
-        'refresh': str(refresh),
-        'access': str(refresh.access_token),
-    }
+    return str(refresh.access_token)
 
 
 class UserLoginSerializer(serializers.Serializer):

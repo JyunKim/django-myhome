@@ -149,7 +149,7 @@ def login(request):
         serializer = UserLoginSerializer(data=request.data)
 
         if not serializer.is_valid(raise_exception=True):
-            return Response({'message': 'Request Body Error.'}, status=status.HTTP_409_CONFLICT)
+            return Response({'message': 'fail'}, status=status.HTTP_409_CONFLICT)
         if serializer.validated_data['email'] == 'None':
             return Response({'message': 'fail'}, status=status.HTTP_400_BAD_REQUEST)
 

@@ -101,7 +101,8 @@ class Room(models.Model):
     ]
 
     user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='rooms', verbose_name='집주인')
-    address = models.CharField('주소', max_length=100)
+    address = models.CharField('주소', max_length=50)
+    address_detail = models.CharField('상세주소', max_length=50)
     zip_code = models.CharField('우편번호', max_length=10)
     room_type = models.CharField('방 종류', max_length=10, choices=ROOM_TYPE_CHOICES)
     deposit = models.IntegerField('보증금')

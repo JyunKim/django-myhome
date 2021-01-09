@@ -14,9 +14,22 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class CommentSerializer(serializers.ModelSerializer):
+    user_email = serializers.SerializerMethodField()
+    user_birth = serializers.SerializerMethodField()
+    user_gender = serializers.SerializerMethodField()
+
     class Meta:
         model = Comment
         fields = '__all__'
+
+    def get_user_email(self, obj):
+        return obj.user.email
+    
+    def get_user_birth(self, obj):
+        return obj.user.birth
+
+    def get_user_gender(self, obj):
+        return obj.user.gender
 
 
 class PhotoSerializer(serializers.ModelSerializer):
@@ -28,10 +41,18 @@ class PhotoSerializer(serializers.ModelSerializer):
 class RoomSerializer(serializers.ModelSerializer):
     comments = CommentSerializer(many=True, read_only=True)
     photos = PhotoSerializer(many=True, read_only=True)
+    user_name = serializers.SerializerMethodField()
+    user_contact = serializers.SerializerMethodField()
 
     class Meta:
         model = Room
         fields = '__all__'
+    
+    def get_user_name(self, obj):
+        return obj.user.name
+
+    def get_user_contact(self, obj):
+        return obj.user.contact
 
 
 class UserSerializer(serializers.ModelSerializer):

@@ -1,3 +1,4 @@
+# manage.py shell -> from api import insert_data
 from .models import User, Mentor, Room, Review, Comment
 
 

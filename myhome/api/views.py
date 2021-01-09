@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import authenticate
 from .models import User, Mentor, Room, Review, Comment, Photo
 from .serializers import UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer, UserLoginSerializer
 
@@ -153,9 +154,12 @@ def login(request):
         if serializer.validated_data['email'] == 'None':
             return Response({'message': 'fail'}, status=status.HTTP_400_BAD_REQUEST)
 
+        user = authenticate(email=request.data["email"], password=request.data["password"])
+        user_serializer = UserSerializer(user)
         response = {
             'message': 'success',
-            'token': serializer.data['token']
+            'token': serializer.data['token'],
+            'user': user_serializer.data
         }
         return Response(response, status=status.HTTP_200_OK)
 

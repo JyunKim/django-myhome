@@ -129,7 +129,6 @@ class Room(models.Model):
     activation = models.BooleanField('활성화', default=True)
     latitude = models.FloatField('위도')
     longitude = models.FloatField('경도')
-    
 
     def __str__(self):
         return self.address

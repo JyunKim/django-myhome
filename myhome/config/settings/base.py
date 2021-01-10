@@ -61,8 +61,8 @@ REST_FRAMEWORK = {
 # Permissions : 각 요청에 대한 허용
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  # 토큰 유효기간
-    'REFRESH_TOKEN_LIFETIME': timedelta(weeks=1),  # 토큰 갱신 유효기간
+    'ACCESS_TOKEN_LIFETIME': timedelta(hours=12),  # 토큰 유효기간
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # 토큰 갱신 유효기간
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
 }

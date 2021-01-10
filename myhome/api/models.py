@@ -127,6 +127,9 @@ class Room(models.Model):
     detail = models.TextField('상세 설명')
     distance = models.CharField('거리', max_length=40, null=True, blank=True)
     activation = models.BooleanField('활성화', default=True)
+    latitude = models.FloatField('위도')
+    longitude = models.FloatField('경도')
+    
 
     def __str__(self):
         return self.address

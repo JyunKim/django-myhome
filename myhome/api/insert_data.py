@@ -57,7 +57,9 @@ room = Room.objects.create(
     occupancy_date='2021-01-10',
     introduction='이만한 집이 없습니다~',
     detail='남향이고 햇빛 잘 들어옵니다. 수압 좋고, 온수 잘 나옵니다.',
-    distance='연세대학교 서문 5분 거리'
+    distance='연세대학교 서문 5분 거리',
+    latitude=37.564089,
+    longitude=126.9367922
 )
 
 review = Review.objects.create(

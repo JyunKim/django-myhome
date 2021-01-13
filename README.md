@@ -1,7 +1,7 @@
 # Myhome
 
 ### Room
-- URL: http://127.0.0.1:8000/api/rooms/
+- URL: api/rooms/
 - Method: GET, POST(로그인 필요)
 - POST시 body에 id, comments, photos, activation, user를 제외한 정보 전송
 ```python
@@ -56,7 +56,7 @@
 ]
 ```
 
-- URL: http://127.0.0.1:8000/api/rooms/1/
+- URL: api/rooms/{room_id}/
 - Method: GET, PUT(로그인 필요), DELETE(로그인 필요)
 ```python
 {
@@ -109,12 +109,12 @@
 ```
 
 Filter
-- URL: http://127.0.0.1:8000/api/rooms/?room_type=원룸&room_type=투룸&deposit_min=1&deposit_max=1000&monthly_rent_min=1&monthly_rent_max=50&management_fee_min=1&management_fee_max=5&space_min=1&space_max=10
+- URL: api/rooms/?room_type=원룸&room_type=투룸&deposit_min=1&deposit_max=1000&monthly_rent_min=1&monthly_rent_max=50&management_fee_min=1&management_fee_max=5&space_min=1&space_max=10
 - Method: GET   
 ![filter](myhome/api/img/filter.PNG)
 
 Nested list
-- URL: http://127.0.0.1:8000/api/rooms/1/comment-list/
+- URL: api/rooms/{room_id}/comment-list/
 - Method: GET
 ```python
 [
@@ -122,7 +122,7 @@ Nested list
         "id": 1,
         "pros": "학교랑 가깝다.",
         "cons": "방음이 안된다.",
-        "content": "집주인분 친절하시고 집도 큰 문제 없이 좋습니다.",
+        "content": "집주인분 친절하시고 집도 큰 문제 없이 좋습니다",
         "rate": 4.5,
         "user": 2,
         "room": 1
@@ -130,11 +130,22 @@ Nested list
 ]
 ```
 
-- URL: http://127.0.0.1:8000/api/rooms/1/post-comment/
+- URL: api/rooms/{room_id}/post-comment/
 - Method: POST
 - body에 pros, cons, content, rate 정보 전송
----
-- URL: http://127.0.0.1:8000/api/rooms/1/photo-list/
+```python
+{
+    "id": 1,
+    "pros": "학교랑 가깝다.",
+    "cons": "방음이 안된다.",
+    "content": "집주인분 친절하시고 집도 큰 문제 없이 좋습니다",
+    "rate": 4.5,
+    "user": 2,
+    "room": 1
+}
+```
+
+- URL: api/rooms/{room_id}/photo-list/
 - Method: GET
 ```python
 [
@@ -146,12 +157,19 @@ Nested list
 ]
 ```
 
-- URL: http://127.0.0.1:8000/api/rooms/1/post-photo/
+- URL: api/rooms/{room_id}/post-photo/
 - Method: POST
 - body에 photo_file 정보 전송
+```python
+{
+    "id": 1,
+    "photo_file": "/media/photo/2021/01/01/CAM00376.jpg",
+    "room": 1
+}
+```
   
 ### User
-- URL: http://127.0.0.1:8000/api/users/
+- URL: api/users/
 - Method: GET, POST
 ```python
 [
@@ -190,11 +208,80 @@ Nested list
 ]
 ```
 
-- URL: http://127.0.0.1:8000/api/users/
+- URL: api/users/{user_id}
 - Method: GET, PUT(본인만 가능), DELETE(본인만 가능)
+```python
+{
+    "id": 2,
+    "interest_rooms": [
+        1
+    ],
+    "email": "asdf@naver.com",
+    "password": "qwer1234",
+    "name": "김호미",
+    "contact": "01012341234",
+    "birth": "2021-01-03",
+    "gender": "여성"
+}
+```
+
+Nested list
+- URL: api/users/{user_id}/interest-room-list/
+- Method: GET
+```python
+[
+    {
+        "id": 1,
+        "comments": [
+            {
+                "id": 1,
+                "pros": "학교랑 가깝다.",
+                "cons": "방음이 안된다.",
+                "content": "집주인분 친절하시고 집도 큰 문제 없이 좋습니다.",
+                "rate": 4.5,
+                "user": 2,
+                "room": 1
+            }
+        ],
+        "photos": [
+            {
+                "id": 1,
+                "photo_file": "http://127.0.0.1:8000/media/photo/2021/01/03/CAM00525.jpg",
+                "room": 1
+            }
+        ],
+        "address": "서울특별시 서대문구 연세로 50",
+        "zip_code": "03722",
+        "room_type": "원룸",
+        "deposit": 1000,
+        "monthly_rent": 50,
+        "management_fee": 5,
+        "total_floor": 3,
+        "floor": 2,
+        "structure": "일반",
+        "space": 20,
+        "completion_year": 2010,
+        "elevator": true,
+        "bed": true,
+        "desk": true,
+        "refrigerator": true,
+        "induction": true,
+        "air_conditioner": true,
+        "washer": true,
+        "short_term": false,
+        "heating": "중앙난방",
+        "occupancy_date": "2021-01-03",
+        "introduction": "이만한 집이 없어요~",
+        "detail": "연세대학교 서문에서 가깝고, 학생들이 많이 이용했었습니다!",
+        "distance": "연세대학교 서문 5분 거리",
+        "activation": true,
+        "user": 3
+    }
+]
+```
 
 ### Mentor
-- URL: http://127.0.0.1:8000/api/mentors/
+- URL: api/mentors/
 - Method: GET, POST(로그인 필요)
 ```python
 [
@@ -221,8 +308,12 @@ Nested list
 ]
 ```
 
+- URL: api/mentors/{mentor_id}/
+- Method: GET, PUT(로그인 필요), DELETE(로그인 필요)
+- 생략
+
 Nested list
-- URL: http://127.0.0.1:8000/api/mentors/1/review-list/
+- URL: api/mentors/{mentor_id}/review-list/
 - Method: GET
 ```python
 [
@@ -236,12 +327,21 @@ Nested list
 ]
 ```
 
-- URL: http://127.0.0.1:8000/api/mentors/1/post-review/
+- URL: api/mentors/{mentor_id}/post-review/
 - Method: POST
 - body에 content, rate 정보 전송
+```python
+{
+    "id": 1,
+    "content": "너무 친절하게 잘 설명해주셔서 좋았습니다.",
+    "rate": 5.0,
+    "user": 2,
+    "mentor": 1
+}
+```
 
 ### Review
-- URL: http://127.0.0.1:8000/api/reviews/
+- URL: api/reviews/
 - Method: GET, POST(로그인 필요)
 ```python
 [
@@ -255,8 +355,12 @@ Nested list
 ]
 ```
 
+- URL: api/reviews/{review_id}/
+- Method: GET, PUT(로그인 필요), DELETE(로그인 필요)
+- 생략
+
 ### Comment
-- URL: http://127.0.0.1:8000/api/comments/
+- URL: api/comments/
 - Method: GET, POST(로그인 필요)
 ```python
 [
@@ -272,8 +376,12 @@ Nested list
 ]
 ```
 
+- URL: api/comments/{comment_id}/
+- Method: GET, PUT(로그인 필요), DELETE(로그인 필요)
+- 생략
+
 ### Photo
-- URL: http://127.0.0.1:8000/api/photos/
+- URL: api/photos/
 - Method: GET, POST
 ```python
 [
@@ -285,8 +393,12 @@ Nested list
 ]
 ```
 
+- URL: api/photos/{photo_id}/
+- Method: GET, PUT(로그인 필요), DELETE(로그인 필요)
+- 생략
+
 ### Login
-- URL: http://127.0.0.1:8000/api/login/
+- URL: api/login/
 - Method: POST   
 email, password -> token 발행
 ```python
@@ -301,3 +413,8 @@ email, password -> token 발행
     "token": "{'refresh': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTYwOTg1MjM2NiwianRpIjoiZjIzNjBmOTI4NzNjNGUxNzg0YjNlY2JlYzZiNGM5ZDQiLCJ1c2VyX2lkIjo3fQ.erP3l2NqAH3D_20aJdhQofpXZ2VAGxBrp4vmrZHaYMU', 'access': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNjA5NzY5NTY2LCJqdGkiOiI0NDFlNjJkMGRkMGY0NzcyYTZlZDYzN2M3NTRlOWVhMSIsInVzZXJfaWQiOjd9.kARZC5ttxoq2KiYcEl7S5HyCyPGuR3uIgRWXxYkhy3g'}"
 }
 ```
+
+### Interest room
+- URL: api/interest-rooms/{room_id}/
+- Method: POST(로그인 필요)
+- 성공 시 status 200, 실패 시 status 400 반환

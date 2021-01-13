@@ -119,6 +119,13 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = UserSerializer
     permission_classes = (ProfileUpdatePermission,)
 
+    @action(detail=True, url_path='interest-room-list')
+    def interest_room_list(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        rooms = user.interest_rooms.all()
+        serializer = RoomSerializer(rooms, many=True)
+        return Response(serializer.data)
+
 
 class MentorViewSet(viewsets.ModelViewSet):
     queryset = Mentor.objects.all()

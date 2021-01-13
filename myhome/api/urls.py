@@ -22,6 +22,6 @@ urlpatterns = [
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),  # token: token
     path('login/', views.login, name='login'),
     path('logout/', views.logout, name='logout'),
-    path('interest-room/<int:room_id>/', views.interest_room, name='interest_room'),
+    path('interest-rooms/<int:room_id>/', views.interest_room, name='interest_room'),
     path('', include(router.urls)),
 ]

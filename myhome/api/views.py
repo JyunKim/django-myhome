@@ -175,3 +175,18 @@ def logout(request):
             return Response(status=status.HTTP_205_RESET_CONTENT)
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def interest_room(request, room_id):
+    room = get_object_or_404(Room, pk=room_id)
+    user = request.user
+
+    if room in user.interest_rooms.all():
+        user.interest_rooms.remove(room)
+        return Response(status=status.HTTP_200_OK)
+    else:
+        user.interest_rooms.add(room)
+        return Response(status=status.HTTP_200_OK)
+    return Response(status=status.HTTP_400_BAD_REQUEST)

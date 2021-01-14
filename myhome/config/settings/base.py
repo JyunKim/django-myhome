@@ -145,11 +145,11 @@ USE_TZ = False
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+# STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 MEDIA_URL = '/media/'
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+# MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 SESSION_COOKIE_SECURE = True
 SESSION_COOKIE_HTTPONLY = True
@@ -161,3 +161,5 @@ STATICFILES_STORAGE = 'config.storages.StaticStorage'
 AWS_ACCESS_KEY_ID = secrets["ACCESS_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = secrets["SECRET_ACCESS_KEY"]
 AWS_STORAGE_BUCKET_NAME = secrets["BUCKET_NAME"]
+AWS_S3_REGION_NAME = secrets["REGION_NAME"]
+AWS_S3_CUSTOM_DOMAIN = '%s.s3.%s.amazonaws.com' % (AWS_STORAGE_BUCKET_NAME, AWS_S3_REGION_NAME)

@@ -66,10 +66,14 @@ class RoomViewSet(viewsets.ModelViewSet):
     @action(methods=['post'], detail=True, url_path='post-photo')
     def post_photo(self, request, pk):
         request.data['room'] = pk
-        serializer = PhotoSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        self.perform_create(serializer)
-        headers = self.get_success_headers(serializer.data)
+        room = get_object_or_404(Room, pk=pk)
+        for file in request.FILES.getlist('photo_file'):
+            request.data['photo_file'] = file
+            serializer = PhotoSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+        serializer = RoomSerializer(room)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
@@ -104,6 +108,17 @@ class CommentViewSet(viewsets.ModelViewSet):
 class PhotoViewSet(viewsets.ModelViewSet):
     queryset = Photo.objects.all()
     serializer_class = PhotoSerializer
+
+    def create(self, request, *args, **kwargs):
+        serializers = []
+        for file in request.FILES.getlist('photo_file'):
+            request.data['photo_file'] = file
+            serializer = PhotoSerializer(data=request.data)
+            serializer.is_valid(raise_exception=True)
+            self.perform_create(serializer)
+            serializers.append(serializer.data)
+            headers = self.get_success_headers(serializer.data)
+        return Response(serializers, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ProfileUpdatePermission(BasePermission):

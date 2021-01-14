@@ -157,6 +157,8 @@ class Comment(models.Model):
 
 class Photo(models.Model):
     room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='photos', verbose_name='매물')
-    photo_file = models.ImageField('사진', upload_to='photo/%Y/%m/%d')  # request.FIELS['image_files'] -> MEDIA_ROOT
-    # path: image.image_file.path  MEDIA_ROOT/photo/~/~/~/~.jpg (절대 경로) - 경로에 저장
-    # url: image.image_file.url  MEDIA_URL/photo/~/~/~/~.jpg (상대 경로) - DB에 문자열로 저장
+    photo_file = models.ImageField('사진', upload_to='photo/%Y/%m/%d')
+    # request.data = request.POST + request.FILES
+    # request.FIELS['photo_file'] -> MEDIA_ROOT
+    # path: photo.photo_file.path  MEDIA_ROOT/photo/~/~/~/~.jpg (절대 경로) - 경로에 저장
+    # url: photo.photo_file.url  MEDIA_URL/photo/~/~/~/~.jpg (상대 경로) - DB에 문자열로 저장

@@ -1,5 +1,6 @@
 secrets.json
 staticfiles/
+insert_data
 
 # Created by https://www.toptal.com/developers/gitignore/api/windows,python,django,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=windows,python,django,vscode

@@ -101,6 +101,7 @@ class Room(models.Model):
     ]
 
     user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='rooms', verbose_name='집주인')
+    name = models.CharField('이름', max_length=30)
     address = models.CharField('주소', max_length=50)
     address_detail = models.CharField('상세주소', max_length=50)
     zip_code = models.CharField('우편번호', max_length=10)
@@ -110,8 +111,7 @@ class Room(models.Model):
     management_fee = models.IntegerField('관리비')
     total_floor = models.IntegerField('전체 층수')
     floor = models.IntegerField('층수')
-    structure = models.CharField('구조', max_length=20)
-    space = models.IntegerField('전용 면적')
+    space = models.FloatField('전용 면적')
     completion_year = models.IntegerField('준공연도')
     elevator = models.BooleanField('엘레베이터')
     bed = models.BooleanField('침대')

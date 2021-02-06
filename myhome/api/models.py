@@ -216,7 +216,7 @@ class SMSAuth(models.Model):
         body = {
             "type": "SMS",
             "from": secrets["PHONE_NUMBER"],
-            "content": "[마이홈] 인증 번호 [{}]를 입력해주세요.".format(self.auth_number),
+            "content": "[마이홈] 본인확인 인증번호 [{}]를 입력해주세요.".format(self.auth_number),
             "messages": [
                 {"to": self.phone_number}
             ]
@@ -233,5 +233,5 @@ class SMSAuth(models.Model):
             updated_at__gte=time_limit
         )
         if result:
-            return True
-        return False
+            return '정상적으로 인증되었습니다.'
+        return '인증에 실패하였습니다.'

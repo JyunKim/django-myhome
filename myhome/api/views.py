@@ -232,7 +232,7 @@ class SMSAuthView(APIView):
     def post(self, request):
         try:
             phone_num = request.data['phone_number']
-            SMSAuth.objects.update_or_create(phone_number=phone_num)
+            SMSAuth.objects.update_or_create(phone_number=phone_num)  # 업데이트, 없으면 생성 -> save() 실행
             return Response({'message': 'OK'})
         except KeyError:
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)

@@ -1,4 +1,6 @@
+import json
 from rest_framework import status, viewsets
+from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, BasePermission, SAFE_METHODS
@@ -6,7 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import authenticate
-from .models import User, Mentor, Room, Review, Comment, Photo
+from .models import User, Mentor, Room, Review, Comment, Photo, SMSAuth
 from .serializers import UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer, UserLoginSerializer
 
 
@@ -213,3 +215,24 @@ def interest_room(request, room_id):
         user.interest_rooms.add(room)
         return Response(status=status.HTTP_200_OK)
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
+class SMSAuthView(APIView):
+    # 인증 번호 입력
+    def get(self, request):
+        try:
+            phone_num = request.query_params['phone_number']
+            auth_num = request.query_params['auth_number']
+            result = SMSAuth.check_auth_number(phone_num, auth_num)
+            return Response({'message': 'OK', 'result': result})
+        except KeyError:
+            return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+        
+    # 휴대폰 번호 입력
+    def post(self, request):
+        try:
+            phone_num = request.data['phone_number']
+            SMSAuth.objects.update_or_create(phone_number=phone_num)
+            return Response({'message': 'OK'})
+        except KeyError:
+            return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)

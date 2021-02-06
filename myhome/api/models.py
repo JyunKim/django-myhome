@@ -1,5 +1,15 @@
+import os
+import base64
+import hmac
+import hashlib
+import time
+import json
+import requests
+import datetime
+from random import randint
 from django import forms
 from django.db import models
+from django.utils import timezone
 from django.contrib.auth.models import BaseUserManager, AbstractBaseUser, PermissionsMixin
 from django.core.mail import send_mail
 from django.utils.translation import gettext_lazy as _
@@ -162,3 +172,66 @@ class Photo(models.Model):
     # request.FIELS['photo_file'] -> MEDIA_ROOT
     # path: photo.photo_file.path  MEDIA_ROOT/photo/~/~/~/~.jpg (절대 경로) - 경로에 저장
     # url: photo.photo_file.url  MEDIA_URL/photo/~/~/~/~.jpg (상대 경로) - DB에 문자열로 저장
+
+
+# 상대경로 - manage.py 기준
+with open('./config/secrets.json') as secret_file:
+    secrets = json.load(secret_file)
+
+
+class SMSAuth(models.Model):
+    phone_number = models.CharField('휴대폰 번호', max_length=20, primary_key=True)
+    auth_number  = models.IntegerField('인증 번호')
+    updated_at = models.DateTimeField('인증 일시', auto_now=True)
+
+    def save(self, *args, **kwargs):
+        self.auth_number = randint(100000, 1000000)
+        super().save(*args, **kwargs)
+        self.send_sms()
+
+    def	make_signature(self, message):
+        secret_key = secrets["NCP_SECRET_KEY"]
+        secret_key = bytes(secret_key, 'UTF-8')
+        signingKey = base64.b64encode(hmac.new(secret_key, message, digestmod=hashlib.sha256).digest())
+        return signingKey
+
+    def send_sms(self):
+        timestamp = int(time.time() * 1000)
+        timestamp = str(timestamp)
+        access_key = secrets["NCP_ACCESS_KEY"]
+        method = "POST"
+        uri = "/sms/v2/services/{}/messages".format(secrets["NCP_SENS_ID"])
+
+        message = method + " " + uri + "\n" + timestamp + "\n" + access_key
+        message = bytes(message, 'UTF-8')
+        signature = self.make_signature(message)
+
+        header = {
+            "Content-Type": "application/json; charset=utf-8",
+            "x-ncp-apigw-timestamp": timestamp,
+            "x-ncp-iam-access-key": access_key,
+            "x-ncp-apigw-signature-v2": signature
+        }
+
+        body = {
+            "type": "SMS",
+            "from": secrets["PHONE_NUMBER"],
+            "content": "[마이홈] 인증 번호 [{}]를 입력해주세요.".format(self.auth_number),
+            "messages": [
+                {"to": self.phone_number}
+            ]
+        }
+
+        requests.post("https://sens.apigw.ntruss.com"+uri, data=json.dumps(body), headers=header)
+
+    @classmethod
+    def check_auth_number(cls, phone_num, auth_num):
+        time_limit = timezone.now() - datetime.timedelta(minutes=3)
+        result = cls.objects.filter(
+            phone_number=phone_num,
+            auth_number=auth_num,
+            updated_at__gte=time_limit
+        )
+        if result:
+            return True
+        return False

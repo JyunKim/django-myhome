@@ -23,5 +23,6 @@ urlpatterns = [
     path('login/', views.login, name='login'),
     # path('logout/', views.logout, name='logout'),
     path('interest-rooms/<int:room_id>/', views.interest_room, name='interest_room'),
+    path('users/auth/', views.SMSAuthView.as_view(), name='user-auth'),
     path('', include(router.urls)),
 ]

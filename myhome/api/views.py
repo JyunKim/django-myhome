@@ -6,11 +6,10 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, BasePermission, SAFE_METHODS
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, resolve_url
 from django.contrib.auth import authenticate
-from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.views import PasswordResetView, PasswordResetCompleteView
-from django.contrib.auth.forms import save
 from .models import User, Mentor, Room, Review, Comment, Photo, SMSAuth
 from .serializers import UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer, UserLoginSerializer
 
@@ -244,18 +243,9 @@ class SMSAuthView(APIView):
 class UserPasswordResetView(PasswordResetView):
     email_template_name = 'registration/password_reset.html'
     subject_template_name = 'registration/password_reset.txt'
-    token_generator = default_token_generator
 
     def form_valid(self, form):
         if User.objects.get(email=self.request.POST.get('email')):
-            opts = {
-                'use_https': self.request.is_secure(),
-                'token_generator': self.token_generator,
-                'email_template_name': self.email_template_name,
-                'subject_template_name': self.subject_template_name,
-                'request': self.request,
-            }
-            form.save(**opts)
             return super().form_valid(form)
         else:
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)

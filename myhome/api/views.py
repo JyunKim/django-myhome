@@ -6,8 +6,11 @@ from rest_framework.decorators import action, api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, BasePermission, SAFE_METHODS
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, resolve_url
 from django.contrib.auth import authenticate
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import PasswordResetView, PasswordResetCompleteView
+from django.contrib.auth.forms import save
 from .models import User, Mentor, Room, Review, Comment, Photo, SMSAuth
 from .serializers import UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer, UserLoginSerializer
 
@@ -210,11 +213,11 @@ def interest_room(request, room_id):
 
     if room in user.interest_rooms.all():
         user.interest_rooms.remove(room)
-        return Response(status=status.HTTP_200_OK)
+        return Response({'message': 'OK'}, status=status.HTTP_200_OK)
     else:
         user.interest_rooms.add(room)
-        return Response(status=status.HTTP_200_OK)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response({'message': 'OK'}, status=status.HTTP_200_OK)
+    return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class SMSAuthView(APIView):
@@ -236,3 +239,30 @@ class SMSAuthView(APIView):
             return Response({'message': 'OK'})
         except KeyError:
             return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserPasswordResetView(PasswordResetView):
+    email_template_name = 'registration/password_reset.html'
+    subject_template_name = 'registration/password_reset.txt'
+    token_generator = default_token_generator
+
+    def form_valid(self, form):
+        if User.objects.filter(email=self.request.POST.get('email')):
+            opts = {
+                'use_https': self.request.is_secure(),
+                'token_generator': self.token_generator,
+                'email_template_name': self.email_template_name,
+                'subject_template_name': self.subject_template_name,
+                'request': self.request,
+            }
+            form.save(**opts)
+            return super().form_valid(form)
+        else:
+            return Response({'message': 'Bad Request'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserPasswordResetCompleteView(PasswordResetCompleteView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['login_url'] = resolve_url('login')
+        return context

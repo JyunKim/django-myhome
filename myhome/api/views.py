@@ -247,7 +247,7 @@ class UserPasswordResetView(PasswordResetView):
     token_generator = default_token_generator
 
     def form_valid(self, form):
-        if User.objects.filter(email=self.request.POST.get('email')):
+        if User.objects.get(email=self.request.POST.get('email')):
             opts = {
                 'use_https': self.request.is_secure(),
                 'token_generator': self.token_generator,

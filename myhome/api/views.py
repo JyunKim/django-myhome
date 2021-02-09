@@ -1,4 +1,5 @@
 import json
+import requests
 from rest_framework import status, viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -7,7 +8,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 from django_filters.rest_framework import DjangoFilterBackend, filters, FilterSet
 from django.http import HttpResponseRedirect
-from django.shortcuts import get_object_or_404, resolve_url
+from django.shortcuts import get_object_or_404, resolve_url, redirect
 from django.contrib.auth import authenticate
 from django.contrib.auth.views import PasswordResetView, PasswordResetCompleteView
 from .models import User, Mentor, Room, Review, Comment, Photo, SMSAuth
@@ -204,6 +205,70 @@ def login(request):
 #             return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
+with open('./config/secrets.json') as secret_file:
+    secrets = json.load(secret_file)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def kakao_login(request):
+    rest_api_key = secrets["KAKAO_API_KEY"]
+    redirect_uri = secrets["KAKAO_REDIRECT_URI"]
+    return redirect(f'https://kauth.kakao.com/oauth/authorize?client_id={rest_api_key}&redirect_uri={redirect_uri}&response_type=code')
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_kakao_token(request):
+    rest_api_key = secrets["KAKAO_API_KEY"]
+    redirect_uri = secrets["KAKAO_REDIRECT_URI"]
+    code = request.GET.get('code')
+
+    header = {
+        "Content-type": "application/x-www-form-urlencoded;charset=utf-8"
+    }
+
+    body = {
+        "grant_type": "authorization_code",
+        "client_id": rest_api_key,
+        "redirect_uri": redirect_uri,
+        "code": code
+    }
+    # content type이 urlencoded이므로 dumps하면 안됨
+    response = requests.post("https://kauth.kakao.com/oauth/token", data=body, headers=header)
+    response_json = response.json()  # 응답이 json형태일 경우 dict로 변환
+    access_token = response_json.get('access_token')
+
+    profile_response = requests.post("https://kapi.kakao.com/v2/user/me", headers={"Authorization": f"Bearer {access_token}"})
+    profile_json = profile_response.json()
+    kakao_account = profile_json.get('kakao_account')
+    name = kakao_account['profile'].get('nickname')
+    email = kakao_account.get('email')
+    gender = kakao_account.get('gender')
+    if gender == 'male':
+        gender = '남성'
+    elif gender == 'female':
+        gender = '여성'
+
+    try:
+        user = User.objects.get(email=email)
+    except User.DoesNotExist:
+        user = User.objects.create(
+            email=email,
+            name=name,
+            gender=gender
+        )
+        
+    serializer = UserSerializer(user)
+    refresh = RefreshToken.for_user(user)
+    response = {
+            'message': 'success',
+            'token': str(refresh.access_token),
+            'user': serializer.data
+        }
+    return Response(response)
+
+        
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def interest_room(request, room_id):

@@ -23,11 +23,13 @@ urlpatterns = [
     path('token/verify/', TokenVerifyView.as_view(), name='token_verify'),  # token: token
     path('login/', views.login, name='login'),
     # path('logout/', views.logout, name='logout'),
+    path('kakao-login/', views.kakao_login, name='kakao_login'),
+    path('kakao-login/token/', views.get_kakao_token, name='kakao_token'),
     path('interest-rooms/<int:room_id>/', views.interest_room, name='interest_room'),
     path('users/auth/', views.SMSAuthView.as_view(), name='user_auth'),
-    path('password-reset/', views.UserPasswordResetView.as_view(), name="password_reset"),
-    path('password-reset-done/', auth_views.PasswordResetDoneView.as_view(), name="password_reset_done"),
-    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name="password_reset_confirm"),
-    path('password-reset-complete/', views.UserPasswordResetCompleteView.as_view(), name="password_reset_complete"),
+    path('password-reset/', views.UserPasswordResetView.as_view(), name='password_reset'),
+    path('password-reset-done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('password-reset-confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('password-reset-complete/', views.UserPasswordResetCompleteView.as_view(), name='password_reset_complete'),
     path('', include(router.urls)),
 ]

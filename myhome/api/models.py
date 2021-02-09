@@ -200,7 +200,7 @@ class SMSAuth(models.Model):
         timestamp = str(timestamp)
         access_key = secrets["NCP_ACCESS_KEY"]
         method = "POST"
-        uri = "/sms/v2/services/{}/messages".format(secrets["NCP_SENS_ID"])
+        uri = f'/sms/v2/services/{secrets["NCP_SENS_ID"]}/messages'
 
         message = method + " " + uri + "\n" + timestamp + "\n" + access_key
         message = bytes(message, 'UTF-8')
@@ -216,12 +216,12 @@ class SMSAuth(models.Model):
         body = {
             "type": "SMS",
             "from": secrets["PHONE_NUMBER"],
-            "content": "[마이홈] 본인확인 인증번호 [{}]를 입력해주세요.".format(self.auth_number),
+            "content": f"[마이홈] 본인확인 인증번호 [{self.auth_number}]를 입력해주세요.",
             "messages": [
                 {"to": self.phone_number}
             ]
         }
-
+        # content type이 json이므로 dumps 해줘야 함
         requests.post("https://sens.apigw.ntruss.com"+uri, data=json.dumps(body), headers=header)
 
     @classmethod

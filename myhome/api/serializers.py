@@ -81,16 +81,15 @@ class MentorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-def get_token(user):
-    refresh = RefreshToken.for_user(user)
-    return str(refresh.access_token)
-
-
 class UserLoginSerializer(serializers.Serializer):
     email = serializers.CharField(max_length=64)
     password = serializers.CharField(max_length=128, write_only=True)
     token = serializers.CharField(max_length=255, read_only=True)
     
+    def get_token(self, user):
+        refresh = RefreshToken.for_user(user)
+        return str(refresh.access_token)
+
     def validate(self, attrs):
         email = attrs.get("email", None)
         password = attrs.get("password", None)
@@ -101,7 +100,7 @@ class UserLoginSerializer(serializers.Serializer):
                 'email': 'None'
             }
         try:
-            token = get_token(user)
+            token = self.get_token(user)
             update_last_login(None, user)
         except User.DoesNotExist:
             raise serializers.ValidationError(

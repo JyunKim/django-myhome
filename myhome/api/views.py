@@ -11,8 +11,9 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, resolve_url, redirect
 from django.contrib.auth import authenticate
 from django.contrib.auth.views import PasswordResetView, PasswordResetCompleteView
-from .models import User, Mentor, Room, Review, Comment, Photo, SMSAuth
-from .serializers import UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, CommentSerializer, PhotoSerializer, UserLoginSerializer
+from .models import User, Mentor, Room, Review, Comment, Photo, SMSAuth, Reservation
+from .serializers import (UserSerializer, MentorSerializer, RoomSerializer, ReviewSerializer, 
+CommentSerializer, PhotoSerializer, UserLoginSerializer, ReservationSerializer)
 
 
 class RoomFilter(FilterSet):
@@ -145,6 +146,13 @@ class UserViewSet(viewsets.ModelViewSet):
         user = get_object_or_404(User, pk=pk)
         rooms = user.interest_rooms.all()
         serializer = RoomSerializer(rooms, many=True)
+        return Response(serializer.data)
+    
+    @action(detail=True, url_path='reservation-list')
+    def reservation_list(self, request, pk):
+        user = get_object_or_404(User, pk=pk)
+        reservations = user.reservations.all()
+        serializer = ReservationSerializer(reservations, many=True)
         return Response(serializer.data)
 
 

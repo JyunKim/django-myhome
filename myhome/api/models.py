@@ -149,6 +149,13 @@ def rate_validator(value):
         raise forms.ValidationError('0 ~ 5 사이의 숫자를 입력해주세요.')
 
 
+class Reservation(models.Model):
+    user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='reservations', verbose_name='예약자')
+    room = models.ForeignKey('Room', on_delete=models.CASCADE, related_name='reserves', verbose_name='매물')
+    date = models.DateTimeField('예약 날짜')
+    complete = models.BooleanField('예약 완료 여부', default=False)
+
+
 class Review(models.Model):
     user = models.ForeignKey('User', on_delete=models.CASCADE, related_name='written_reviews', verbose_name='작성자')
     mentor = models.ForeignKey('Mentor', on_delete=models.CASCADE, related_name='reviews', verbose_name='멘토')

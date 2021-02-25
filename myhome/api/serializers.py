@@ -122,7 +122,7 @@ class ReservationSerializer(serializers.ModelSerializer):
     room_space = serializers.SerializerMethodField()
 
     class Meta:
-        model = Comment
+        model = Reservation
         fields = '__all__'
 
     def get_room_name(self, obj):

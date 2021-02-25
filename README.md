@@ -280,6 +280,27 @@ Nested list
 ]
 ```
 
+- URL: api/users/{user_id}/reservation-list/
+- Method: GET
+```python
+[
+    {
+        "id": 1,
+        "room_name": "asdf",
+        "room_type": "원룸",
+        "room_deposit": 1,
+        "room_monthly_rent": 1,
+        "room_management_fee": 1,
+        "room_floor": 1,
+        "room_space": 1.0,
+        "date": "2021-02-25T23:37:35",
+        "complete": false,
+        "user": 1,
+        "room": 1
+    }
+]
+```
+
 ### Mentor
 - URL: api/mentors/
 - Method: GET, POST(로그인 필요)
@@ -418,3 +439,22 @@ email, password -> token 발행
 - URL: api/interest-rooms/{room_id}/
 - Method: POST(로그인 필요)
 - 성공 시 status 200, 실패 시 status 400 반환
+
+### Kakao login
+- URL: api/kakao-login/
+
+### SMS authentication
+- URL: api/users/auth/
+1. 휴대폰 번호 입력 -> 문자 발송
+- Method: POST
+- phone_number
+2. 인증번호 입력
+- Method: GET
+- phone_number, auth_number
+
+### Password reset
+1. 이메일 입력 -> 비밀번호 초기화 링크 전송
+- URL: api/password-reset/
+- Method: POST
+- email
+2. 새 비밀번호 입력

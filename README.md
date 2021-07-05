@@ -1,4 +1,4 @@
-# Myhome
+# Myhome API
 
 ### Room
 - URL: api/rooms/
